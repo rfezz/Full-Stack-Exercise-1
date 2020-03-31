@@ -1,10 +1,15 @@
 package exercise.appbackend.service;
 
+import exercise.appbackend.model.Tweet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TweetService{
@@ -18,7 +23,6 @@ public class TweetService{
     }
 
     public void printPlease(){
-        System.out.println("Test 1");
     }
 
     public void printPlease2(){
@@ -26,29 +30,33 @@ public class TweetService{
     }
 
 
-    public void searchTwitter() throws TwitterException {
-        System.out.println("starting");
+    public List<Tweet> searchTwitter() throws TwitterException {
+
         ConfigurationBuilder cb = new ConfigurationBuilder();
-        System.out.println("1");
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(env.getProperty("twitter4j.oauth.consumerKey"))
                 .setOAuthConsumerSecret(env.getProperty("twitter4j.oauth.consumerSecret"))
                 .setOAuthAccessToken(env.getProperty("twitter4j.oauth.accessToken"))
                 .setOAuthAccessTokenSecret(env.getProperty("twitter4j.oauth.accessTokenSecret"));
-        System.out.println("2");
+
         TwitterFactory tf = new TwitterFactory(cb.build());
-        System.out.println("3");
         twitter = tf.getInstance();
-        System.out.println("4");
         Query query = new Query("$SPY");
-        System.out.println("5");
         QueryResult result = twitter.search(query);
-        System.out.println("6");
-        System.out.println("Total Number of Tweets: " + result.getCount());
+
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM:ss");
+        ArrayList<Tweet> tweetList = new ArrayList<>();
+
         for (Status status : result.getTweets()) {
-            System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
+            Tweet newTweet = new Tweet();
+            newTweet.setName(status.getUser().getName());
+            newTweet.setScreenName(status.getUser().getScreenName());
+            newTweet.setDate(format.format(status.getCreatedAt()));
+            newTweet.setContent(status.getText());
+            tweetList.add(newTweet);
         }
-        System.out.println("7");
+
+        return tweetList;
     }
 
 }
