@@ -1,0 +1,40 @@
+<div class="container">
+    <form [formGroup]="optionform" (ngSubmit)="submitChoice()" novalidate>
+      <div *ngIf="confirmationMessage != ''">
+        <h3 class="has-info">{{confirmationMessage}}</h3>
+      </div>
+      <div class="form-group">
+        <label>Search Filter</label>
+        <select class="form-control" formControlName="searchOption" required>
+          <option value="">Please select a parameter</option>
+          <option *ngFor="let s of searchOptions"
+                  [value]="s">
+                  {{s}}
+          </option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" >Submit</button>
+    </form>
+    <table class="table table-bordered table-inverse">
+        <tr>
+          <th>Name</th>
+          <th>Handle</th>
+          <th>Date</th>
+          <th class="text-right">Content</th>
+        </tr>
+        <tr *ngFor="let tweet of tweets">
+          <td>
+            {{tweet.name}}
+          </td>
+          <td>
+            {{tweet.screen_name}}
+          </td>
+          <td>
+            {{tweet.date}}
+          </td>
+          <td class="text-right">
+            {{tweet.content}}
+          </td>
+        </tr>
+      </table>
+  </div>

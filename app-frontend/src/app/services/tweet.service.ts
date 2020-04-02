@@ -11,11 +11,13 @@ const httpOptions = {
 })
 export class TweetService {
 
-  constructor(private http:HttpClient) { 
-
-  }
+  constructor(private http:HttpClient) { }
 
   getTweets(){
     return this.http.get('/server/search');
+  }
+
+  getFilteredTweets(selection : string){
+    return this.http.get('/server/search/' + selection);
   }
 }

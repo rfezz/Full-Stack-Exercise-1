@@ -1,11 +1,10 @@
 package exercise.appbackend.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import exercise.appbackend.model.Tweet;
 import exercise.appbackend.service.TweetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,19 +21,16 @@ public class Controller {
 
     @GetMapping
     public String welcome(){
-        ts.printPlease();
         return "Hello!";
     }
 
-    @GetMapping("/test")
-    public String welcome2(){
-        ts.printPlease2();
-        return "This is the test!";
+    @GetMapping("/update")
+    public void updateDatabase() throws TwitterException {
+        ts.updateDatabase();
     }
 
-    @GetMapping("/search")
-    public List<Tweet> search() throws TwitterException {
-        return ts.searchTwitter();
+    @GetMapping("/search/{query}")
+    public List<Tweet> searchDatabase(@PathVariable("query") String query) throws TwitterException {
+        return ts.searchDatabase(query);
     }
-
 }

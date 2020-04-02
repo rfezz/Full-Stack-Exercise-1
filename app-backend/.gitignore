@@ -32,3 +32,4 @@ build/
 
 ### Sensitive Info ###
 application.properties
+*.db

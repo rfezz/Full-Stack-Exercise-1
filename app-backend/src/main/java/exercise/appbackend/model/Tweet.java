@@ -1,10 +1,15 @@
 package exercise.appbackend.model;
 
-import java.util.Date;
+import javax.persistence.*;
 
+@Entity
 public class Tweet {
+
+    @Id
+    @GeneratedValue(strategy =  GenerationType.AUTO)
+    private Long id;
     private String name;
-    private String screenName;
+    private String screen_name;
     private String date;
     private String content;
 
@@ -16,12 +21,12 @@ public class Tweet {
         this.name = name;
     }
 
-    public String getScreenName() {
-        return screenName;
+    public String getScreen_name() {
+        return screen_name;
     }
 
-    public void setScreenName(String screenName) {
-        this.screenName = screenName;
+    public void setScreen_name(String screen_name) {
+        this.screen_name = screen_name;
     }
 
     public String getDate() {
@@ -38,5 +43,13 @@ public class Tweet {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
