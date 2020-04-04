@@ -1,6 +1,10 @@
 package exercise.appbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity
 public class Tweet {
@@ -52,4 +56,6 @@ public class Tweet {
     public void setId(Long id) {
         this.id = id;
     }
+
+
 }

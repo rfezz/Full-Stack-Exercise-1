@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 })
 export class HomeComponent implements OnInit {
   public tweets;
+  public lastSelection = "All";
+  public lastUpdate;
 
   searchOptions: string[] = [
     'All',
@@ -25,6 +27,9 @@ export class HomeComponent implements OnInit {
     this.optionform = new FormGroup({
       searchOption: new FormControl('', Validators.required)
     });
+
+    this.getTweets();
+
   }
 
   submitChoice() {
@@ -32,12 +37,34 @@ export class HomeComponent implements OnInit {
     this.tweetService.getFilteredTweets(this.optionform.get('searchOption').value).subscribe(
       data => {
         this.tweets = data;
+        this.lastSelection = this.optionform.get('searchOption').value;
         return true;
       },
       error => {
         return Observable.throw(error);
       }
-    )
+    );
+  }
+
+  getTweets() {
+    this.tweetService.getFilteredTweets("All").subscribe(
+      data => { this.tweets = data},
+      err => console.error(err),
+      () => {
+        this.lastUpdate = this.tweets[0].date;
+        this.confirmationMessage = "Now showing:  " + this.lastSelection 
+        + ". Last updated: " + this.lastUpdate;
+      }
+    );
+
+  }
+
+  updatePage(){
+    
+    this.tweetService.updateTweets().subscribe();
+
+    this.getTweets();
+
   }
 
 }

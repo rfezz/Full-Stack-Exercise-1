@@ -16,7 +16,7 @@ export class AdminComponent implements OnInit {
   }
 
   getTweets() {
-    this.tweetService.getTweets().subscribe(
+    this.tweetService.getFilteredTweets("All").subscribe(
       data => { this.tweets = data},
       err => console.error(err),
       () => console.log('tweets loaded')

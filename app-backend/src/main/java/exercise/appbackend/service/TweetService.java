@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,9 +22,9 @@ public class TweetService{
     @Autowired
     private SQLiteRepository sqLiteRepository;
 
-    Twitter twitter;
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
-    SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM:ss");
+    Twitter twitter;
 
     public TweetService(){
     }
@@ -53,22 +54,40 @@ public class TweetService{
 
         query = new Query("$SPY support");
         result = twitter.search(query);
+
         storeTweets(result);
+
+        sanitizeData();
     }
 
     public List<Tweet> searchDatabase(String query){
 
-        if (query.equals("All")){
-            return sqLiteRepository.findAll();
-        }
+        List<Tweet> tweets;
 
-        return sqLiteRepository.findAll().stream()
-                .filter(tweet -> tweet.getContent().contains(query.toLowerCase()) ||
-                                 tweet.getContent().contains(query))
-                .collect(Collectors.toList());
+        if (query.equals("All")) {
+            tweets = sqLiteRepository.findAll();
+        }
+        else {
+            tweets = sqLiteRepository.findAll().stream()
+                    .filter(tweet -> tweet.getContent().toLowerCase().contains(query.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+        return sortByDate(tweets);
     }
 
-    private void storeTweets(QueryResult result){
+    //utility functions
+
+    public void sanitizeData(){
+        List<Tweet> tweets = sqLiteRepository.findAll();
+        HashSet<Object> seen = new HashSet<>();
+        tweets.forEach(e -> {
+            if (!seen.add(e.getContent())) {
+                sqLiteRepository.deleteById(e.getId());
+            }
+        });
+    }
+
+    private void storeTweets(QueryResult result) {
         for (Status status : result.getTweets()) {
             Tweet newTweet = new Tweet();
             newTweet.setName(status.getUser().getName());
@@ -77,6 +96,19 @@ public class TweetService{
             newTweet.setContent(status.getText());
             sqLiteRepository.save(newTweet);
         }
+    }
+
+    private List<Tweet> sortByDate(List<Tweet> tweets){
+        tweets.sort(Comparator.comparing(tweet -> {
+            try {
+                return format.parse(tweet.getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }));
+        Collections.reverse(tweets);
+        return tweets;
     }
 
 }

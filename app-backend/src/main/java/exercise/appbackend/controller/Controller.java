@@ -29,6 +29,11 @@ public class Controller {
         ts.updateDatabase();
     }
 
+    @GetMapping("/search/")
+    public List<Tweet> search() throws TwitterException {
+        return ts.searchDatabase("All");
+    }
+
     @GetMapping("/search/{query}")
     public List<Tweet> searchDatabase(@PathVariable("query") String query) throws TwitterException {
         return ts.searchDatabase(query);
