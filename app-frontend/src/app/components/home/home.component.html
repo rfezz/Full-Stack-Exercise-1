@@ -1,42 +1,30 @@
-<div class="container">
-    <form [formGroup]="optionform" (ngSubmit)="submitChoice()" novalidate>
-      <div *ngIf="confirmationMessage != ''">
-        <h3 class="has-info">{{confirmationMessage}}</h3>
-      </div>
-      <div class="form-group">
-        <label>Search Filter</label>
-        <select class="form-control" formControlName="searchOption" required>
-          <option value="">Please select a parameter</option>
-          <option *ngFor="let s of searchOptions"
-                  [value]="s">
-                  {{s}}
-          </option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary" >Submit</button>
-    </form>
-    <button (click)="updatePage()" class="btn btn-primary" style="float: right; position: relative;
-    top: -30px;">Update Tweets</button>
-    <table class="table table-bordered table-inverse" style="margin-top: 20px;">
-        <tr>
-          <th>Name</th>
-          <th>Handle</th>
-          <th>Date</th>
-          <th class="text-right">Content</th>
-        </tr>
-        <tr *ngFor="let tweet of tweets">
-          <td>
-            {{tweet.name}}
-          </td>
-          <td>
-            {{tweet.screen_name}}
-          </td>
-          <td>
-            {{tweet.date}}
-          </td>
-          <td class="text-right">
+<div class="container" style="max-width: 860px;">
+  <div>
+    <label>Search Filter</label>
+    <select id="optionSelect" (change)="submitChoice($event.target.value)" style="display: block;">
+      <option *ngFor="let s of searchOptions"
+              [value]="s">
+              {{s}}
+      </option>
+    </select>
+  </div>
+  <div  style="margin-top: 10px;">
+    <button (click)="updatePage()" class="btn btn-primary" style="float: left;">Update Tweets</button>
+    <label *ngIf="tweets.length > 0" style="margin-left: 10px;font-size: smaller;float: left;margin-top: 10px;"> Last Updated: {{lastUpdate}} UTC</label>
+    <label *ngIf="tweets.length > 0" style="margin-left: 10px;font-size: smaller;float: right;margin-top: 10px;"> Tweets pulled: {{tweets.length}}</label>
+  </div>
+    <table class="table table-bordered table-inverse" style="background-color: lightsteelblue;float: left;margin-top: 10px;">
+
+        <tr *ngFor="let tweet of tweets" style="border: 1px solid #2F465D;">
+          <div style="padding: 10px;background: aliceblue;">
+            <span style="font-weight: bold;">{{tweet.name}} </span>
+            <span>@{{tweet.screen_name}} </span>
+            <span style="font-style: italic;">{{tweet.date}} UTC</span>
+          </div>
+          <div style="padding: 10px;">
             {{tweet.content}}
-          </td>
+          </div>
         </tr>
+
       </table>
   </div>

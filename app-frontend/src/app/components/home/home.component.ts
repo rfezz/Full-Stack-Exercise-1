@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { TweetService } from '../../services/tweet.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -18,26 +17,20 @@ export class HomeComponent implements OnInit {
     'Support',
     'Resistance'
   ]
-  optionform: FormGroup;
   confirmationMessage: string = "";
 
-  constructor(private tweetService: TweetService) { }
+  constructor(private tweetService: TweetService) {
+    this.tweets = [];
+   }
 
   ngOnInit(): void {
-    this.optionform = new FormGroup({
-      searchOption: new FormControl('', Validators.required)
-    });
-
     this.getTweets();
-
   }
 
-  submitChoice() {
-    this.confirmationMessage = "You have selected " + this.optionform.get('searchOption').value;
-    this.tweetService.getFilteredTweets(this.optionform.get('searchOption').value).subscribe(
+  submitChoice(optionValue) {
+    this.tweetService.getFilteredTweets(optionValue).subscribe(
       data => {
         this.tweets = data;
-        this.lastSelection = this.optionform.get('searchOption').value;
         return true;
       },
       error => {
@@ -52,8 +45,6 @@ export class HomeComponent implements OnInit {
       err => console.error(err),
       () => {
         this.lastUpdate = this.tweets[0].date;
-        this.confirmationMessage = "Now showing:  " + this.lastSelection 
-        + ". Last updated: " + this.lastUpdate;
       }
     );
 
@@ -61,9 +52,14 @@ export class HomeComponent implements OnInit {
 
   updatePage(){
     
-    this.tweetService.updateTweets().subscribe();
-
-    this.getTweets();
+    this.tweetService.updateTweets().subscribe(
+      data => data,
+      err => console.error(err),
+      () => {
+        this.lastUpdate = this.tweets[0].date;
+        this.getTweets();
+      }
+    );
 
   }
 
