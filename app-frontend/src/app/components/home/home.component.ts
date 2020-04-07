@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { TweetService } from '../../services/tweet.service';
 import { Observable } from 'rxjs';
 
+
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -15,12 +17,15 @@ export class HomeComponent implements OnInit {
   searchOptions: string[] = [
     'All',
     'Support',
-    'Resistance'
+    'Resistance',
+    'Contains Numbers Only'
   ]
+  option: string;
   confirmationMessage: string = "";
 
   constructor(private tweetService: TweetService) {
     this.tweets = [];
+    this.option = "All";
    }
 
   ngOnInit(): void {
@@ -51,13 +56,14 @@ export class HomeComponent implements OnInit {
   }
 
   updatePage(){
-    
+
     this.tweetService.updateTweets().subscribe(
       data => data,
       err => console.error(err),
       () => {
         this.lastUpdate = this.tweets[0].date;
         this.getTweets();
+        this.option = this.searchOptions[0];
       }
     );
 

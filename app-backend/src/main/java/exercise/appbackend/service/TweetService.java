@@ -62,16 +62,18 @@ public class TweetService{
 
     public List<Tweet> searchDatabase(String query){
 
-        List<Tweet> tweets;
+        List<Tweet> tweets = sqLiteRepository.findAll();
 
-        if (query.equals("All")) {
-            tweets = sqLiteRepository.findAll();
+        switch (query) {
+            case "Resistance" :
+            case "Support" :
+                return searchByString(query, tweets);
+            case "Contains Numbers Only" :
+                return searchForNumbers(tweets);
+            default:
+                break;
         }
-        else {
-            tweets = sqLiteRepository.findAll().stream()
-                    .filter(tweet -> tweet.getContent().toLowerCase().contains(query.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
+
         return sortByDate(tweets);
     }
 
@@ -109,6 +111,17 @@ public class TweetService{
         }));
         Collections.reverse(tweets);
         return tweets;
+    }
+
+    private List<Tweet> searchByString(String query, List<Tweet> tweets){
+        return sortByDate(tweets.stream()
+                .filter(tweet -> tweet.getContent().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList()));
+    }
+    private List<Tweet> searchForNumbers(List<Tweet> tweets){
+        return sortByDate(tweets.stream()
+                .filter(tweet -> tweet.getContent().matches(".*(^|\\D)(\\d{3}|\\d{3}.\\d{2})(\\D+|$).*"))
+                .collect(Collectors.toList()));
     }
 
 }

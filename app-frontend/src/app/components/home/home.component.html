@@ -1,10 +1,10 @@
 <div class="container" style="max-width: 860px;">
   <div>
     <label>Search Filter</label>
-    <select id="optionSelect" (change)="submitChoice($event.target.value)" style="display: block;">
-      <option *ngFor="let s of searchOptions"
-              [value]="s">
-              {{s}}
+    <select id="optionSelect" (change)="submitChoice($event.target.value)" [(ngModel)]="option" style="display: block;">
+      <option *ngFor="let option of searchOptions"
+              [value]="option">
+              {{option}}
       </option>
     </select>
   </div>
